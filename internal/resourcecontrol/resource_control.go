@@ -46,7 +46,9 @@ func MakeRequestInfo(req *tikvrpc.Request) *RequestInfo {
 	var bypass bool
 	requestSource := req.Context.GetRequestSource()
 	if len(requestSource) > 0 {
-		if strings.Contains(requestSource, util.InternalRequestPrefix+util.InternalTxnOthers) {
+		if strings.Contains(requestSource, util.InternalRequestPrefix+util.InternalTxnOthers) ||
+			strings.Contains(requestSource, "ddl") {
+			logutil.BgLogger().Info("bypass request", zap.String("request source", requestSource))
 			bypass = true
 		}
 	}
