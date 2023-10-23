@@ -727,11 +727,13 @@ func (s *KVStore) ruRuntimeStatsMapCleaner() {
 	}
 }
 
+/*
 // CreateRURuntimeStats creates a RURuntimeStats for the startTS and returns it.
 func (s *KVStore) CreateRURuntimeStats(startTS uint64) *util.RURuntimeStats {
 	rrs, _ := s.ruRuntimeStatsMap.LoadOrStore(startTS, util.NewRURuntimeStats())
 	return rrs.(*util.RURuntimeStats)
 }
+*/
 
 // EnableResourceControl enables the resource control.
 func EnableResourceControl() {
