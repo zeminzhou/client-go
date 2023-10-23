@@ -37,7 +37,6 @@ package util
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"math"
 	"strconv"
 	"sync"
@@ -45,13 +44,12 @@ import (
 	"time"
 
 	"github.com/pingcap/kvproto/pkg/kvrpcpb"
-	rmpb "github.com/pingcap/kvproto/pkg/resource_manager"
-	uatomic "go.uber.org/atomic"
 )
 
 type commitDetailCtxKeyType struct{}
 type lockKeysDetailCtxKeyType struct{}
 type execDetailsCtxKeyType struct{}
+type ruDetailsCtxKeyType struct{}
 type traceExecDetailsCtxKeyType struct{}
 
 var (
@@ -63,6 +61,9 @@ var (
 
 	// ExecDetailsKey presents ExecDetail info key in context.
 	ExecDetailsKey = execDetailsCtxKeyType{}
+
+	// ruDetailsCtxKey presents RUDetals info key in context.
+	RUDetailsCtxKey = ruDetailsCtxKeyType{}
 
 	// traceExecDetailsKey is a context key whose value indicates whether to add ExecDetails to trace.
 	traceExecDetailsKey = traceExecDetailsCtxKeyType{}
@@ -329,6 +330,12 @@ type ExecDetails struct {
 	BackoffDuration    int64
 	WaitKVRespDuration int64
 	WaitPDRespDuration int64
+}
+
+// RUDetails contains RU detail info.
+type RUDetails struct {
+	WRU int64
+	RRU int64
 }
 
 // FormatDuration uses to format duration, this function will prune precision before format duration.
@@ -682,6 +689,7 @@ func (rd *ResolveLockDetail) Merge(resolveLock *ResolveLockDetail) {
 	rd.ResolveLockTime += resolveLock.ResolveLockTime
 }
 
+/*
 // RURuntimeStats is the runtime stats collector for RU.
 type RURuntimeStats struct {
 	readRU  *uatomic.Float64
@@ -733,3 +741,4 @@ func (rs *RURuntimeStats) Update(consumption *rmpb.Consumption) {
 	rs.readRU.Add(consumption.RRU)
 	rs.writeRU.Add(consumption.WRU)
 }
+*/
