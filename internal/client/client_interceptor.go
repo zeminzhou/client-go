@@ -104,7 +104,7 @@ func buildResourceControlInterceptor(
 	}
 	resourceControlInterceptor := *rcInterceptor
 
-	ruDetails := ctx.Value(util.ExecDetailsKey)
+	ruDetails := ctx.Value(util.RUDetailsCtxKey)
 
 	// Make the request info.
 	reqInfo := resourcecontrol.MakeRequestInfo(req)
