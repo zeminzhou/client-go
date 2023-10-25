@@ -16,7 +16,6 @@ package client
 
 import (
 	"context"
-	"sync"
 	"sync/atomic"
 	"time"
 
@@ -35,12 +34,11 @@ var _ Client = interceptedClient{}
 
 type interceptedClient struct {
 	Client
-	ruRuntimeStatsMap *sync.Map
 }
 
 // NewInterceptedClient creates a Client which can execute interceptor.
-func NewInterceptedClient(client Client, ruRuntimeStatsMap *sync.Map) Client {
-	return interceptedClient{client, ruRuntimeStatsMap}
+func NewInterceptedClient(client Client) Client {
+	return interceptedClient{client}
 }
 
 func (r interceptedClient) SendRequest(ctx context.Context, addr string, req *tikvrpc.Request, timeout time.Duration) (*tikvrpc.Response, error) {
@@ -124,8 +122,7 @@ func buildResourceControlInterceptor(
 			req.GetResourceControlContext().Penalty = penalty
 			if ruDetails != nil {
 				detail := ruDetails.(*util.RUDetails)
-				atomic.AddInt64(&detail.WRU, int64(consumption.WRU))
-				atomic.AddInt64(&detail.RRU, int64(consumption.RRU))
+				detail.Update(consumption)
 			}
 
 			resp, err := next(target, req)
@@ -137,8 +134,7 @@ func buildResourceControlInterceptor(
 				}
 				if ruDetails != nil {
 					detail := ruDetails.(*util.RUDetails)
-					atomic.AddInt64(&detail.WRU, int64(consumption.WRU))
-					atomic.AddInt64(&detail.RRU, int64(consumption.RRU))
+					detail.Update(consumption)
 				}
 			}
 			return resp, err
